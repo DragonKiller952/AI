@@ -7,3 +7,5 @@ for i in range(1, lengte+1):
 
 for j in reversed(range(1, lengte)):
     print('*' * j)
+
+    #Testchange
