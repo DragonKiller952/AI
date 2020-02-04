@@ -1,1 +1,3 @@
-# Yeetus skeetus, deletus that fetus
+# Opg1
+
+lengte = input('hoe groot')
