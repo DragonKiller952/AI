@@ -82,7 +82,7 @@ def check(lst):
         return'Deze lijst voldoet niet'
 
 
-#Opg4:
+# Opg4:
 
 zin = (input('Geef een zin: ')).upper()
 zintest1 = list(zin)
@@ -120,3 +120,23 @@ def sort(lst):
                     lst[i] = y
                     lst[i + 1] = x
     return lst
+
+
+# Opg6:
+
+def gemiddelde(lst):
+    total = 0
+    for i in range(len(lst)):
+        total += lst[i]
+    average = total / len(lst)
+    return average
+
+
+def gemiddeldegemiddelde(lstlst):
+    gemiddeldelst = []
+    for i in range(len(lstlst)):
+        gemiddeldelst.append(gemiddelde(lstlst[i]))
+    result = gemiddelde(gemiddeldelst)
+    return result
+
+
