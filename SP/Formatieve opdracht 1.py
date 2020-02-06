@@ -81,3 +81,26 @@ def check(lst):
     else:
         return'Deze lijst voldoet niet'
 
+
+#Opg4:
+
+zin = (input('Geef een zin: ')).upper()
+zintest1 = list(zin)
+palintest1 = list(reversed(zin))
+
+if zintest1 == palintest1:
+    print('Dit is een palindroom')
+else:
+    print('Dit is geen palindroom')
+
+zintest2 = list(zin)
+palintest2 = []
+
+for i in reversed(range(len(zintest2))):
+    palintest2.append(zintest2[i])
+
+if zintest2 == palintest2:
+    print('Dit is een palindroom')
+else:
+    print('Dit is geen palindroom')
+
