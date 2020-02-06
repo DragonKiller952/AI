@@ -140,3 +140,15 @@ def gemiddeldegemiddelde(lstlst):
     return result
 
 
+#Opg7
+
+import random
+
+choice = int(input('Kies een nummer van 0-10: '))
+number = random.randint(0, 10)
+
+while choice != number:
+    choice = int(input('Dat is niet het juiste nummer, probeer opnieuw: '))
+    number = random.randint(0, 10)
+
+print('Dat was het juiste nummer!')
