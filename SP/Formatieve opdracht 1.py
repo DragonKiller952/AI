@@ -47,4 +47,37 @@ else:
                 break
         print('Het eerste verschil zit op index: {}'.format(verschil))
 
+# Opg3a:
+
+
+def count(lst, target):
+    amount = 0
+    for i in range(len(lst)):
+        if lst[i] == target:
+            amount += 1
+    return amount
+
+# Opg3b:
+
+
+def biggestdiff(lst):
+    biggestdiff = 0
+    for i in range(len(lst)):
+        if i+1 != len(lst):
+            diff = abs(lst[i] - lst[i+1])
+            if diff > biggestdiff:
+                biggestdiff = diff
+    return biggestdiff
+
+# Opg3c
+
+
+def check(lst):
+    if count(lst, 0) < 12:
+        if count(lst, 0) < count(lst, 1):
+            return'Deze lijst voldoet'
+        else:
+            return'Deze lijst voldoet niet'
+    else:
+        return'Deze lijst voldoet niet'
 
