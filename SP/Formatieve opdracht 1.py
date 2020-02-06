@@ -104,3 +104,19 @@ if zintest2 == palintest2:
 else:
     print('Dit is geen palindroom')
 
+# Opg5:
+
+
+def sort(lst):
+    sort = 1
+    while sort:
+        sort = 0
+        for i in range(len(lst)):
+            if not i + 1 > len(lst) - 1:
+                if lst[i + 1] < lst[i]:
+                    sort = 1
+                    x = lst[i]
+                    y = lst[i + 1]
+                    lst[i] = y
+                    lst[i + 1] = x
+    return lst
