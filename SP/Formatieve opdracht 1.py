@@ -217,3 +217,62 @@ def fibonaci(n):
             result[1] = current[0] + current[1]
         return result[1]
 
+
+# Opg11:
+
+alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+            'v', 'w', 'x', 'y', 'z']
+cipher = []
+number = 0
+tekst = list(input('Geef een tekst: '))
+rotatie = int(input('Geef een rotatie: '))
+if rotatie >= 0:
+    actrotatie = rotatie % 26
+    for i in range(len(tekst)):
+        if (tekst[i].isupper()):
+            current = tekst[i].lower()
+            if current not in alphabet:
+                cipher.append(tekst[i])
+            else:
+                for j in range(len(alphabet)):
+                    if alphabet[j] == current:
+                        number = j
+                        break
+                cipher.append(alphabet[-26 + number + rotatie].upper())
+
+        else:
+            if tekst[i] not in alphabet:
+                cipher.append(tekst[i])
+            else:
+                for j in range(len(alphabet)):
+                    if alphabet[j] == tekst[i]:
+                        number = j
+                        break
+                cipher.append(alphabet[-26 + number + rotatie])
+else:
+    actrotatie = rotatie % -26
+    for i in range(len(tekst)):
+        if (tekst[i].isupper()):
+            current = tekst[i].lower()
+            if current not in alphabet:
+                cipher.append(tekst[i])
+            else:
+                for j in range(len(alphabet)):
+                    if alphabet[j] == current:
+                        number = j
+                        break
+                cipher.append(alphabet[number + rotatie].upper())
+
+        else:
+            if tekst[i] not in alphabet:
+                cipher.append(tekst[i])
+            else:
+                for j in range(len(alphabet)):
+                    if alphabet[j] == tekst[i]:
+                        number = j
+                        break
+                cipher.append(alphabet[number + rotatie])
+
+
+print(''.join(cipher))
+
