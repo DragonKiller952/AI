@@ -201,3 +201,19 @@ def move(ch, n):
     else:
         return ch
 
+
+# Opg10:
+
+def fibonaci(n):
+    result = [0, 1]
+    current = [0, 0]
+    if n == 0:
+        return 0
+    else:
+        for i in range(n-1):
+            current[0] = result[0]
+            current[1] = result[1]
+            result[0] = current[1]
+            result[1] = current[0] + current[1]
+        return result[1]
+
