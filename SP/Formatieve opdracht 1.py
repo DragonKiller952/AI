@@ -140,7 +140,7 @@ def gemiddeldegemiddelde(lstlst):
     return result
 
 
-#Opg7
+# Opg7:
 
 import random
 
@@ -152,3 +152,30 @@ while choice != number:
     number = random.randint(0, 10)
 
 print('Dat was het juiste nummer!')
+
+# Opg8:
+
+invoer = 'FormatieveOpdracht1Opg8'
+uitvoer = 'UitvoerFormatieveOpdracht1Opg8'
+inv = open(invoer, 'r')
+uit = open(uitvoer, 'w')
+text = []
+
+inhoud = inv.readlines()
+for i in range(len(inhoud)):
+    lettertest = 0
+    current2 = []
+    for j in range(len(inhoud[i])):
+        if inhoud[i] != '\n':
+            current = inhoud[i][j]
+            if lettertest:
+                current2.append(current)
+            else:
+                if current != ' ':
+                    current2.append(current)
+                    lettertest = 1
+    mergecurrent = ''.join(current2)
+    if mergecurrent:
+        text.append(mergecurrent)
+for i in range(len(text)):
+    uit.write(text[i])
