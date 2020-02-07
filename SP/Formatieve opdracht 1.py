@@ -155,7 +155,7 @@ print('Dat was het juiste nummer!')
 
 # Opg8:
 
-invoer = 'FormatieveOpdracht1Opg8'
+invoer = 'InvoerFormatieveOpdracht1Opg8'
 uitvoer = 'UitvoerFormatieveOpdracht1Opg8'
 inv = open(invoer, 'r')
 uit = open(uitvoer, 'w')
