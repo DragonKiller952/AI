@@ -179,3 +179,25 @@ for i in range(len(inhoud)):
         text.append(mergecurrent)
 for i in range(len(text)):
     uit.write(text[i])
+
+# Opg9:
+
+
+def move(ch, n):
+    lst = list(str(ch))
+    newlst = [0, 0, 0, 0, 0, 0, 0, 0]
+    if n > 0:
+        movement = n % 8
+        for i in range(8):
+            newlst[i - 8 + movement] = lst[i]
+        result = ''.join(newlst)
+        return result
+    elif n < 0:
+        movement = n % -8
+        for i in range(8):
+            newlst[i + movement] = lst[i]
+        result = ''.join(newlst)
+        return result
+    else:
+        return ch
+
