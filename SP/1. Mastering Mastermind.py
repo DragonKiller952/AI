@@ -168,7 +168,7 @@ def computer_vs_user2():  # Deze code voert "A Worst Case Strategy" uit met behu
 
 
 def computer_vs_user3():  # Deze code doet het zelfde als computer_vs_user2, alleen kiest hij
-    # inplaats van minmax, de maxmin
+    # inplaats van minmax, de maxmin om hiermee de hoeveelheid pogingen mogelijk te verminderen
     possibilities = comb('ABCDEF', 4)
     allposs = comb('ABCDEF', 4)
 
