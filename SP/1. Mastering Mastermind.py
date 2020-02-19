@@ -5,6 +5,7 @@ import itertools
 # https://stackoverflow.com/questions/47380999/how-to-make-a-list-with-all-possible-combinations
 # https://en.wikipedia.org/wiki/Mastermind_(board_game)#Five-guess_algorithm
 # YET ANOTHER MASTERMIND STRATEGY by Barteld Kooi
+# Lucas van der Horst
 
 
 def comb(lst, length):
