@@ -3,6 +3,8 @@ import itertools
 
 # bronnen
 # https://stackoverflow.com/questions/47380999/how-to-make-a-list-with-all-possible-combinations
+# https://en.wikipedia.org/wiki/Mastermind_(board_game)#Five-guess_algorithm
+# YET ANOTHER MASTERMIND STRATEGY by Barteld Kooi
 
 
 def comb(lst, length):
@@ -31,6 +33,46 @@ def feedback(secret, guess):
                 wit += 1
                 move2 -= 1
     return zwart, wit
+
+
+def nextguess1(possibilities, allposs):
+    allfeedback = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1), (2, 2),
+                   (3, 0), (4, 0)]
+    maximalen = []
+    for i in range(len(possibilities)):
+        biggest = 0
+        for j in range(len(allfeedback)):
+            currentcheck = checkpossibilities(allposs, possibilities[i], allfeedback[j])
+            if len(currentcheck) > biggest:
+                biggest = len(currentcheck)
+        maximalen.append(biggest)
+    minmaxnumber = min(maximalen)
+    for i in range(len(maximalen)):
+        if maximalen[i] == minmaxnumber:
+            minmaxlocatie = i
+            break
+
+    return possibilities[minmaxlocatie]
+
+
+def nextguess2(possibilities, allposs):
+    allfeedback = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1), (2, 2),
+                   (3, 0), (4, 0)]
+    minimalen = []
+    for i in range(len(possibilities)):
+        biggest = 1296
+        for j in range(len(allfeedback)):
+            currentcheck = checkpossibilities(allposs, possibilities[i], allfeedback[j])
+            if biggest > len(currentcheck) > 0:
+                biggest = len(currentcheck)
+        minimalen.append(biggest)
+    maxminnumber = max(minimalen)
+    for i in range(len(minimalen)):
+        if minimalen[i] == maxminnumber:
+            maxminlocatie = i
+            break
+
+    return possibilities[maxminlocatie]
 
 
 def checkpossibilities(lst, guess, given):
@@ -76,7 +118,7 @@ def user_vs_computer():
             break
 
 
-def computer_vs_user():
+def computer_vs_user1():  # Deze code voert "A Simple Strategy" uit
     possibilities = comb('ABCDEF', 4)
 
     tries = 0
@@ -98,7 +140,63 @@ def computer_vs_user():
             break
 
 
-def computer_vs_computer():
+def computer_vs_user2():  # Deze code voert "A Worst Case Strategy" uit met behulp van de info uit de bron
+    possibilities = comb('ABCDEF', 4)
+    allposs = comb('ABCDEF', 4)
+
+    tries = 0
+    while True:
+        if tries < 10:
+            tries += 1
+            print('Volgende stap berekenen...')
+            chosenguess = nextguess1(possibilities, allposs)
+            print('poging {}'.format(tries))
+            print('nog {} mogelijkheden'.format(len(possibilities)))
+            print(chosenguess)
+            givenzwart = int(input('Geef hoeveel zwarte pinnen: '))
+            givenwit = int(input('Geef hoeveel witte pinnen: '))
+            given = (givenzwart, givenwit)
+            if given == (4, 0):
+                print('De computer heeft gewonnen in {} pogingen!'.format(tries))
+                break
+            else:
+                possibilities = checkpossibilities(possibilities, chosenguess, given)
+        else:
+            print('De computer heeft verloren')
+            break
+
+
+def computer_vs_user3():  # Deze code doet het zelfde als computer_vs_user2, alleen kiest hij
+    # inplaats van minmax, de maxmin
+    possibilities = comb('ABCDEF', 4)
+    allposs = comb('ABCDEF', 4)
+
+    tries = 0
+    while True:
+        if tries < 10:
+            tries += 1
+            print('Volgende stap berekenen...')
+            chosenguess = nextguess2(possibilities, allposs)
+            print('poging {}'.format(tries))
+            print('nog {} mogelijkheden'.format(len(possibilities)))
+            print(chosenguess)
+            givenzwart = int(input('Geef hoeveel zwarte pinnen: '))
+            givenwit = int(input('Geef hoeveel witte pinnen: '))
+            given = (givenzwart, givenwit)
+            if given == (4, 0):
+                print('De computer heeft gewonnen in {} pogingen!'.format(tries))
+                break
+            else:
+                possibilities = checkpossibilities(possibilities, chosenguess, given)
+        else:
+            print('De computer heeft verloren')
+            break
+
+
+# De volgende functies zijn voor automatisch testen
+
+
+def computer_vs_computer1():
     generated = []
     lengtereeks = 4
     tries = 0
@@ -125,24 +223,102 @@ def computer_vs_computer():
             return tries
 
 
+def computer_vs_computer2():
+    possibilities = comb('ABCDEF', 4)
+    allposs = comb('ABCDEF', 4)
+
+    generated = []
+    lengtereeks = 4
+    tries = 0
+    for i in range(lengtereeks):
+        generated.append(random.choice('ABCDEF'))
+
+    while True:
+        if tries < 10:
+            tries += 1
+            chosenguess = nextguess1(possibilities, allposs)
+            result = feedback(generated, chosenguess)
+            if result == (4, 0):
+                return tries
+            else:
+                possibilities = checkpossibilities(possibilities, chosenguess, result)
+        else:
+            return tries
+
+
+def computer_vs_computer3():
+    possibilities = comb('ABCDEF', 4)
+    allposs = comb('ABCDEF', 4)
+
+    generated = []
+    lengtereeks = 4
+    tries = 0
+    for i in range(lengtereeks):
+        generated.append(random.choice('ABCDEF'))
+
+    while True:
+        if tries < 10:
+            tries += 1
+            chosenguess = nextguess2(possibilities, allposs)
+            result = feedback(generated, chosenguess)
+            if result == (4, 0):
+                return tries
+            else:
+                possibilities = checkpossibilities(possibilities, chosenguess, result)
+        else:
+            return tries
+
+
 if __name__ == "__main__":
+    # Deze statements halen uit jouw antwoorden hoe je het spel wil spelen
     player = input('Is de computer de master? [Y/N]: ').upper()
     if player == 'Y':
         guesser = input('Is de computer de guesser? [Y/N]: ').upper()
         if guesser == 'Y':
-            scores = []
-            for i in range(100000):
-                if i % 1000 == 0:
-                    print('{}% done'.format((i / 100000) * 100))
-                scores.append(computer_vs_computer())
-            print(sum(scores) / len(scores))
-            for i in range(1, 11):
-                print('{}: {}%'.format(i, ((scores.count(i)) / len(scores)) * 100))
+            # Deze code kan gebruikt worden om de computer het algoritme 10 keer te laten testen, en hiervan de
+            # resultaten weer te laten geven. dit kan best lang duren, dus het wordt aangeraden om het handmatig
+            # te testen
+            kind = input('Welke versie wil je testen? [1/2/3]: ')
+            if kind == '1':
+                scores = []
+                print('Bezig met testen...')
+                for i in range(10):
+                    scores.append(computer_vs_computer1())
+                print('gemiddelde: {}'.format(sum(scores) / len(scores)))
+                for i in range(1, 11):
+                    print('{}: {}%'.format(i, ((scores.count(i)) / len(scores)) * 100))
+            elif kind == '2':
+                scores = []
+                print('Bezig met testen...')
+                print('Dit duurt ongeveer 15 minuten')
+                for i in range(10):
+                    scores.append(computer_vs_computer2())
+                print('gemiddelde: {}'.format(sum(scores) / len(scores)))
+                for i in range(1, 11):
+                    print('{}: {}%'.format(i, ((scores.count(i)) / len(scores)) * 100))
+            elif kind == '3':
+                scores = []
+                print('Bezig met testen...')
+                print('Dit duurt ongeveer 15 minuten')
+                for i in range(10):
+                    scores.append(computer_vs_computer3())
+                print('gemiddelde: {}'.format(sum(scores) / len(scores)))
+                for i in range(1, 11):
+                    print('{}: {}%'.format(i, ((scores.count(i)) / len(scores)) * 100))
         elif guesser == 'N':
-            computer_vs_user()
+            # Met deze code kan je zelf tegen de computer spelen
+            user_vs_computer()
     elif player == 'N':
         guesser = input('Is de computer de guesser? [Y/N]: ').upper()
         if guesser == 'Y':
-            user_vs_computer()
+            # Met deze code speelt de computer tegen jou
+            kind = input('Welke versie wil je spelen? [1/2/3]: ')
+            if kind == '1':
+                computer_vs_user1()
+            elif kind == '2':
+                computer_vs_user2()
+            elif kind == '3':
+                computer_vs_user3()
         elif guesser == 'N':
+            # hiermee zou je tegen een andere speler kunnen spelen
             print('Dit wordt niet ondersteunt')
