@@ -56,24 +56,24 @@ def nextguess1(possibilities, allposs):
     return possibilities[minmaxlocatie]
 
 
-def nextguess2(possibilities, allposs):
+def nextguess2(possibilities):
     allfeedback = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1), (2, 2),
                    (3, 0), (4, 0)]
-    minimalen = []
+    maximalen = []
     for i in range(len(possibilities)):
-        biggest = 1296
+        biggest = 0
         for j in range(len(allfeedback)):
-            currentcheck = checkpossibilities(allposs, possibilities[i], allfeedback[j])
-            if biggest > len(currentcheck) > 0:
+            currentcheck = checkpossibilities(possibilities, possibilities[i], allfeedback[j])
+            if len(currentcheck) > biggest:
                 biggest = len(currentcheck)
-        minimalen.append(biggest)
-    maxminnumber = max(minimalen)
-    for i in range(len(minimalen)):
-        if minimalen[i] == maxminnumber:
-            maxminlocatie = i
+        maximalen.append(biggest)
+    minmaxnumber = min(maximalen)
+    for i in range(len(maximalen)):
+        if maximalen[i] == minmaxnumber:
+            minmaxlocatie = i
             break
 
-    return possibilities[maxminlocatie]
+    return possibilities[minmaxlocatie]
 
 
 def checkpossibilities(lst, guess, given):
@@ -141,16 +141,15 @@ def computer_vs_user1():  # Deze code voert "A Simple Strategy" uit
             break
 
 
-def computer_vs_user2():  # Deze code voert "A Worst Case Strategy" uit met behulp van de info uit de bron
+def computer_vs_user2():  # Deze code voert "A Worst Case Strategy" uit met behulp van de info uit de wikipedia bron
     possibilities = comb('ABCDEF', 4)
     allposs = comb('ABCDEF', 4)
+    chosenguess = ('A', 'A', 'B', 'B')  # Deze eerste keuze geeft hij altijd, dus door dit te doen bespaar je tijd
 
     tries = 0
     while True:
         if tries < 10:
             tries += 1
-            print('Volgende stap berekenen...')
-            chosenguess = nextguess1(possibilities, allposs)
             print('poging {}'.format(tries))
             print('nog {} mogelijkheden'.format(len(possibilities)))
             print(chosenguess)
@@ -162,22 +161,23 @@ def computer_vs_user2():  # Deze code voert "A Worst Case Strategy" uit met behu
                 break
             else:
                 possibilities = checkpossibilities(possibilities, chosenguess, given)
+                print('Volgende stap berekenen...')
+                chosenguess = nextguess1(possibilities, allposs)
         else:
             print('De computer heeft verloren')
             break
 
 
-def computer_vs_user3():  # Deze code doet het zelfde als computer_vs_user2, alleen kiest hij
-    # inplaats van minmax, de maxmin om hiermee de hoeveelheid pogingen mogelijk te verminderen
+def computer_vs_user3():  # Deze code doet het zelfde als computer_vs_user2, alleen test hij minmax op in plaats van
+    # alle combinaties alleen op de mogelijke combinaties. Hierdoor is de code wanneer je hem 10 keer automatisch test
+    # meer dan 1 minuut sneller
     possibilities = comb('ABCDEF', 4)
-    allposs = comb('ABCDEF', 4)
+    chosenguess = ('A', 'A', 'B', 'B')  # Deze eerste keuze geeft hij altijd, dus door dit te doen bespaar je tijd
 
     tries = 0
     while True:
         if tries < 10:
             tries += 1
-            print('Volgende stap berekenen...')
-            chosenguess = nextguess2(possibilities, allposs)
             print('poging {}'.format(tries))
             print('nog {} mogelijkheden'.format(len(possibilities)))
             print(chosenguess)
@@ -189,6 +189,8 @@ def computer_vs_user3():  # Deze code doet het zelfde als computer_vs_user2, all
                 break
             else:
                 possibilities = checkpossibilities(possibilities, chosenguess, given)
+                print('Volgende stap berekenen...')
+                chosenguess = nextguess2(possibilities)
         else:
             print('De computer heeft verloren')
             break
@@ -209,17 +211,12 @@ def computer_vs_computer1():
     while True:
         if tries < 10:
             tries += 1
-            # print('poging {}'.format(tries))
-            # print(possibilities[0])
             result = feedback(generated, possibilities[0])
             if result == (4, 0):
-                # print('De computer heeft gewonnen in {} pogingen!'.format(tries))
                 return tries
             else:
                 possibilities = checkpossibilities(possibilities, possibilities[0], result)
         else:
-            # print('De computer heeft verloren')
-            # print('Helaas, de reeks was {}{}{}{}'.format(generated[1], generated[2], generated[2], generated[3]))
             print(generated)
             return tries
 
@@ -227,6 +224,7 @@ def computer_vs_computer1():
 def computer_vs_computer2():
     possibilities = comb('ABCDEF', 4)
     allposs = comb('ABCDEF', 4)
+    chosenguess = ('A', 'A', 'B', 'B')  # Deze eerste keuze geeft hij altijd, dus door dit te doen bespaar je tijd
 
     generated = []
     lengtereeks = 4
@@ -237,19 +235,19 @@ def computer_vs_computer2():
     while True:
         if tries < 10:
             tries += 1
-            chosenguess = nextguess1(possibilities, allposs)
             result = feedback(generated, chosenguess)
             if result == (4, 0):
                 return tries
             else:
                 possibilities = checkpossibilities(possibilities, chosenguess, result)
+                chosenguess = nextguess1(possibilities, allposs)
         else:
             return tries
 
 
 def computer_vs_computer3():
     possibilities = comb('ABCDEF', 4)
-    allposs = comb('ABCDEF', 4)
+    chosenguess = ('A', 'A', 'B', 'B')  # Deze eerste keuze geeft hij altijd, dus door dit te doen bespaar je tijd
 
     generated = []
     lengtereeks = 4
@@ -260,12 +258,12 @@ def computer_vs_computer3():
     while True:
         if tries < 10:
             tries += 1
-            chosenguess = nextguess2(possibilities, allposs)
             result = feedback(generated, chosenguess)
             if result == (4, 0):
                 return tries
             else:
                 possibilities = checkpossibilities(possibilities, chosenguess, result)
+                chosenguess = nextguess2(possibilities)
         else:
             return tries
 
@@ -291,18 +289,22 @@ if __name__ == "__main__":
             elif kind == '2':
                 scores = []
                 print('Bezig met testen...')
-                print('Dit duurt ongeveer 15 minuten')
+                print('Dit duurt ongeveer 1,5 minuut')
                 for i in range(10):
+                    print('.', end=' ')
                     scores.append(computer_vs_computer2())
+                print('\n')
                 print('gemiddelde: {}'.format(sum(scores) / len(scores)))
                 for i in range(1, 11):
                     print('{}: {}%'.format(i, ((scores.count(i)) / len(scores)) * 100))
             elif kind == '3':
                 scores = []
                 print('Bezig met testen...')
-                print('Dit duurt ongeveer 15 minuten')
+                print('Dit duurt ongeveer 30 seconden')
                 for i in range(10):
+                    print('.', end=' ')
                     scores.append(computer_vs_computer3())
+                print('\n')
                 print('gemiddelde: {}'.format(sum(scores) / len(scores)))
                 for i in range(1, 11):
                     print('{}: {}%'.format(i, ((scores.count(i)) / len(scores)) * 100))
