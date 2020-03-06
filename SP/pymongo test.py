@@ -19,7 +19,7 @@ cur = conn.cursor()
 cur.execute("DROP TABLE IF EXISTS products;")
 
 cur.execute("CREATE TABLE products (id varchar PRIMARY KEY, brand varchar, category varchar, sub_category varchar,"
-            " sub_sub_category varchar, gender varchar, color varchar, name varchar, price float);")
+            " sub_sub_category varchar, gender varchar, color varchar, name varchar, price integer);")
 # cur.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
 # Pass data to fill a query placeholders and let Psycopg perform
 # the correct conversion (no more SQL injections!)
@@ -34,7 +34,7 @@ for i in products:
                  i['gender'] if 'gender' in i else None,
                  i['color'] if 'color' in i else None,
                  i['name'] if 'name' in i else None,
-                 (i['price']['selling_price'])/100 if 'price' in i else None))
+                 i['price']['selling_price'] if 'price' in i else None))
 """
 # Query the database and obtain data as Python objects
 cur.execute("SELECT * FROM test;")
