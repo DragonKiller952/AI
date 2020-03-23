@@ -7,15 +7,21 @@ cur = conn.cursor()
 
 print("Setting up tables...")
 
+# Maakt tabel met data van views per product uit tabel products.
+
 cur.execute("DROP TABLE IF EXISTS valuesproducts")
 
 cur.execute("CREATE TABLE valuesproducts AS (select id, name, targetaudience, brand, category, subcategory, "
             "subsubcategory, categoryviews, subcategoryviews, subsubcategoryviews, productviews from products)")
 
+# Maakt tabel met data van favoriete categorys per profiel uit tabel profiles.
+
 cur.execute("DROP TABLE IF EXISTS popular_categorys_per_user")
 
 cur.execute("CREATE TABLE popular_categorys_per_user AS (select id, mostusedcat, mostusedsubcat, mostusedsubsubcat "
             "from profiles)")
+
+# Zet kolommen voor recommendations op basis van category in tabel popular_categorys_per_user.
 
 cur.execute("ALTER TABLE popular_categorys_per_user ADD catrecommend varchar")
 cur.execute("ALTER TABLE popular_categorys_per_user ADD subcatrecommend varchar")
@@ -25,9 +31,13 @@ conn.commit()
 
 print("Getting data...")
 
+# Haalt alle favoriete categorys op en zorgt ervoor dat er maar 1 van elk in de lijst staat.
+
 cur.execute("select mostusedcat from popular_categorys_per_user")
 
 categorys = list(set(cur.fetchall()))
+
+# Haalt meest bekeken product op aan de hand van meest bekeken category.
 
 cur.execute("select id from valuesproducts where categoryviews is not null and subcategoryviews is not null and"
             " subsubcategoryviews is not null and productviews is not null "
@@ -36,9 +46,13 @@ cur.execute("select id from valuesproducts where categoryviews is not null and s
 
 defaultcatrec = cur.fetchall()
 
+# Haalt alle favoriete subcategorys op en zorgt ervoor dat er maar 1 van elk in de lijst staat.
+
 cur.execute("select mostusedsubcat from popular_categorys_per_user")
 
 subcategorys = list(set(cur.fetchall()))
+
+# Haalt 2 meest bekeken producten op aan de hand van meest bekeken subcategory.
 
 cur.execute("select id from valuesproducts where subcategoryviews is not null and"
             " subsubcategoryviews is not null and productviews is not null "
@@ -47,9 +61,13 @@ cur.execute("select id from valuesproducts where subcategoryviews is not null an
 
 defaultsubcatrec = cur.fetchall()
 
+# Haalt alle favoriete subsubcategorys op en zorgt ervoor dat er maar 1 van elk in de lijst staat.
+
 cur.execute("select mostusedsubsubcat from popular_categorys_per_user")
 
 subsubcategorys = list(set(cur.fetchall()))
+
+# Haalt 3 meest bekeken producten op aan de hand van meest bekeken subsubcategory.
 
 cur.execute("select id from valuesproducts where subsubcategoryviews is not null and productviews is not null "
             "order by subsubcategoryviews desc, productviews desc "
@@ -58,6 +76,10 @@ cur.execute("select id from valuesproducts where subsubcategoryviews is not null
 defaultsubsubcatrec = cur.fetchall()
 
 print("Calculating category recommendations...")
+
+# Haalt recommendations per favoriete category op aan de hand van categoryviews,
+# en zet deze in popular_categorys_per_user bij de juiste categorys.
+# Daarnaast zet hij in de lege velden het meest overal bekeken product op basis van meest bekeken category.
 
 catrecs = []
 
@@ -90,6 +112,10 @@ cur.execute("UPDATE popular_categorys_per_user SET catrecommend = '{}' "
 conn.commit()
 
 print("Calculating subcategory recommendations...")
+
+# Haalt recommendations per favoriete subcategory op aan de hand van subcategoryviews,
+# en zet deze in popular_categorys_per_user bij de juiste subcategorys.
+# Daarnaast zet hij in de lege velden het meest overal bekeken product op basis van meest bekeken subcategory.
 
 subcatrecs = []
 
@@ -140,6 +166,10 @@ for i in range(2):
 conn.commit()
 
 print("Calculating subsubcategory recommendations...")
+
+# Haalt recommendations per favoriete subsubcategory op aan de hand van subsubcategoryviews,
+# en zet deze in popular_categorys_per_user bij de juiste subsubcategorys.
+# Daarnaast zet hij in de lege velden het meest overal bekeken product op basis van meest bekeken subsubcategory.
 
 subsubcatrecs = []
 
@@ -198,6 +228,8 @@ for i in range(2):
 
 print("Creating table with recommendations per user...")
 
+# Maakt tabel met recommendations per profiel uit tabel popular_categorys_per_user.
+
 cur.execute("DROP TABLE IF EXISTS profile_recommendations")
 
 cur.execute("CREATE TABLE profile_recommendations AS (select id, catrecommend, subcatrecommend, subsubcatrecommend "
@@ -209,5 +241,7 @@ conn.commit()
 
 cur.close()
 conn.close()
+
+# Start het eerstvolgende bestand.
 
 exec(open('RecommendPerProduct.py').read())

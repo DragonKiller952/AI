@@ -9,6 +9,8 @@ print("Getting CategorysPerUser...")
 
 read = inv.readlines()
 
+# Haalt data van alle categorys per profiel uit het .txt bestand.
+
 data = []
 for i in range(len(read)):
     current_data = eval(read[i])
@@ -17,6 +19,9 @@ for i in range(len(read)):
 inv.close()
 
 print("Calculating most used categorys per user...")
+
+# Berekend per profiel wat de meest bekeken category, subcategory en subsubcategory is.
+
 favsperuser = []
 for i in range(len(data)):
     categorycount = []
@@ -57,6 +62,8 @@ print("Putting calculated data in table...")
 conn = psycopg2.connect("dbname=Onlinestore user=postgres password=0Ksndjskxw")
 cur = conn.cursor()
 
+# Voegt kolommen toe aan tabel profiles om data van favoriete categorien per user in te stoppen.
+
 cur.execute("ALTER TABLE profiles DROP COLUMN IF EXISTS mostusedcat")
 cur.execute("ALTER TABLE profiles DROP COLUMN IF EXISTS mostusedsubcat")
 cur.execute("ALTER TABLE profiles DROP COLUMN IF EXISTS mostusedsubsubcat")
@@ -66,6 +73,8 @@ cur.execute("ALTER TABLE profiles ADD mostusedsubcat varchar")
 cur.execute("ALTER TABLE profiles ADD mostusedsubsubcat varchar")
 
 conn.commit()
+
+# Voegt data van favoriete category, subcategory en subsubcategory bij bijbehorende profiel.
 
 for i in range(len(favsperuser)):
     print("\r{} of {} in table...".format(i+1, len(favsperuser)), end="")
@@ -101,5 +110,7 @@ print()
 
 cur.close()
 conn.close()
+
+# Start het eerstvolgende bestand.
 
 exec(open('RecommendedPerUser.py').read())

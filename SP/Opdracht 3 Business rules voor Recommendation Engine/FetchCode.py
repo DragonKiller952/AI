@@ -10,6 +10,8 @@ conn = psycopg2.connect("dbname=Onlinestore user=postgres password=0Ksndjskxw")
 cur = conn.cursor()
 print("Getting code...")
 
+# Haalt de sessiedata op per profiel met daarbij de producten die zijn bekeken.
+
 cur.execute("select profiles.id, sessions.endtime, sessions.duration, sessions.sale, "
             "profiles_previously_viewed.prodid, products.category, products.subcategory, products.subsubcategory, "
             "products.name, products.targetaudience, products.sellingprice, products.deal from profiles "
@@ -23,6 +25,10 @@ profids = []
 ids = []
 count = 0
 print("Formatting...")
+
+# Zet het profiel samen met de categorien en namen van alle producten die zijn bekeken door dat profiel in een list.
+# Daarnaast zit er code in die maar max 1 profiel per keer converteerd, om zo het programma een beetje snel te houden.
+
 for j in range(len(code)):
     print("\rFormatting {} of {}...".format(j+1, len(code)), end="")
     if len(profids) > 1:
@@ -59,9 +65,13 @@ uit.write('{}\n'.format(profids[0]))
 
 print("Exporting data to DataProductsPerUser...")
 
+# De data die is gelinkt wordt uit de list in een .txt bestand gezet.
+
 uit.close()
 print("\nPrinted {} items!".format(count))
 cur.close()
 conn.close()
+
+# Start het eerstvolgende bestand.
 
 exec(open("CatagoryConversion.py").read())

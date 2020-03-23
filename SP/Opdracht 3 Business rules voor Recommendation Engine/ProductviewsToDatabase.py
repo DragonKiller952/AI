@@ -7,6 +7,8 @@ inv = open(invoer, 'r')
 
 read = inv.readlines()
 
+# Haalt data van alle categorys van alle profielen uit het .txt bestand.
+
 data = []
 for i in range(len(read)):
     current_data = eval(read[i])
@@ -15,6 +17,8 @@ for i in range(len(read)):
 inv.close()
 
 print("Counting categorys...")
+
+# Telt hoe vaak een category is bekeken.
 
 categorycount = []
 categorys = list(set(data[0][1]))
@@ -27,6 +31,8 @@ categorycount.sort(reverse=True)
 
 print("\nCounting subcategorys...")
 
+# Telt hoe vaak een subcategory is bekeken.
+
 subcategorycount = []
 subcategorys = list(set(data[1][1]))
 for i in range(len(subcategorys)):
@@ -37,6 +43,8 @@ for i in range(len(subcategorys)):
 subcategorycount.sort(reverse=True)
 
 print("\nCounting subsubcategorys...")
+
+# Telt hoe vaak een subsubcategory is bekeken.
 
 subsubcategorycount = []
 subsubcategorys = list(set(data[2][1]))
@@ -49,6 +57,8 @@ subsubcategorycount.sort(reverse=True)
 
 print("\nCounting names...")
 
+# Telt hoe vaak elk product is bekeken.
+
 namescount = []
 names = list(set(data[3][1]))
 for i in range(len(names)):
@@ -59,6 +69,8 @@ for i in range(len(names)):
 namescount.sort(reverse=True)
 
 print("\nAltering Tables...")
+
+# Voegt kolommen toe aan products waar de data van het tellen in kan worden gezet.
 
 conn = psycopg2.connect("dbname=Onlinestore user=postgres password=0Ksndjskxw")
 cur = conn.cursor()
@@ -77,6 +89,8 @@ conn.commit()
 
 print("Exporting data...")
 
+# Zet de teldata van alle categorys in de kolom bij producten met dezelfde category.
+
 for i in range(len(categorycount)):
     name = categorycount[i][1]
     if name is not None:
@@ -86,6 +100,8 @@ for i in range(len(categorycount)):
         cur.execute("UPDATE products SET categoryviews={} WHERE category='{}'".format(categorycount[i][0], name))
     else:
         cur.execute("UPDATE products SET categoryviews={} WHERE category='{}'".format(categorycount[i][0], name))
+
+# Zet de teldata van alle subcategorys in de kolom bij producten met dezelfde subcategory.
 
 for i in range(len(subcategorycount)):
     name = subcategorycount[i][1]
@@ -98,6 +114,8 @@ for i in range(len(subcategorycount)):
     else:
         cur.execute(
             "UPDATE products SET subcategoryviews={} WHERE subcategory='{}'".format(subcategorycount[i][0], name))
+
+# Zet de teldata van alle subsubcategorys in de kolom bij producten met dezelfde subsubcategory.
 
 for i in range(len(subsubcategorycount)):
     name = subsubcategorycount[i][1]
@@ -112,6 +130,8 @@ for i in range(len(subsubcategorycount)):
         cur.execute(
             "UPDATE products SET subsubcategoryviews={} WHERE subsubcategory='{}'".format(subsubcategorycount[i][0],
                                                                                           name))
+
+# Zet de teldata van alle producten in de kolom bij producten met dezelfde naam.
 
 for i in range(len(namescount)):
     name = namescount[i][1]
@@ -129,5 +149,7 @@ conn.commit()
 
 cur.close()
 conn.close()
+
+# Start het eerstvolgende bestand.
 
 exec(open('RecommendedCategorysPerUser.py').read())

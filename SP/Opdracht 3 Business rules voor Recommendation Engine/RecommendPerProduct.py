@@ -7,10 +7,14 @@ cur = conn.cursor()
 
 print("Setting up tables...")
 
+# Maakt tabel met data van views per product uit tabel products.
+
 cur.execute("DROP TABLE IF EXISTS valuesproducts")
 
 cur.execute("CREATE TABLE valuesproducts AS (select id, name, targetaudience, brand, category, subcategory, "
             "subsubcategory, categoryviews, subcategoryviews, subsubcategoryviews, productviews from products)")
+
+# Zet kolommen voor recommendations op basis van category in tabel products.
 
 cur.execute("ALTER TABLE products DROP COLUMN IF EXISTS catrecommend")
 cur.execute("ALTER TABLE products DROP COLUMN IF EXISTS subcatrecommend")
@@ -24,9 +28,13 @@ conn.commit()
 
 print("Getting data...")
 
+# Haalt alle categorys op en zorgt ervoor dat er maar 1 van elk in de lijst staat.
+
 cur.execute("select category from products")
 
 categorys = list(set(cur.fetchall()))
+
+# Haalt meest bekeken product op aan de hand van meest bekeken category.
 
 cur.execute("select id from valuesproducts where categoryviews is not null and subcategoryviews is not null and"
             " subsubcategoryviews is not null and productviews is not null "
@@ -35,9 +43,13 @@ cur.execute("select id from valuesproducts where categoryviews is not null and s
 
 defaultcatrec = cur.fetchall()
 
+# Haalt alle subcategorys op en zorgt ervoor dat er maar 1 van elk in de lijst staat.
+
 cur.execute("select subcategory from products")
 
 subcategorys = list(set(cur.fetchall()))
+
+# Haalt 2 meest bekeken producten op aan de hand van meest bekeken subcategory.
 
 cur.execute("select id from valuesproducts where subcategoryviews is not null and"
             " subsubcategoryviews is not null and productviews is not null "
@@ -46,9 +58,13 @@ cur.execute("select id from valuesproducts where subcategoryviews is not null an
 
 defaultsubcatrec = cur.fetchall()
 
+# Haalt alle subsubcategorys op en zorgt ervoor dat er maar 1 van elk in de lijst staat.
+
 cur.execute("select subsubcategory from products")
 
 subsubcategorys = list(set(cur.fetchall()))
+
+# Haalt 3 meest bekeken producten op aan de hand van meest bekeken subsubcategory.
 
 cur.execute("select id from valuesproducts where subsubcategoryviews is not null and productviews is not null "
             "order by subsubcategoryviews desc, productviews desc "
@@ -57,6 +73,10 @@ cur.execute("select id from valuesproducts where subsubcategoryviews is not null
 defaultsubsubcatrec = cur.fetchall()
 
 print("Calculating category recommendations...")
+
+# Haalt recommendations per category op aan de hand van categoryviews,
+# en zet deze in products bij de juiste categorys.
+# Daarnaast zet hij in de lege velden het meest overal bekeken product op basis van meest bekeken category.
 
 catrecs = []
 
@@ -91,6 +111,10 @@ cur.execute("UPDATE products SET catrecommend = '{}' "
 conn.commit()
 
 print("Calculating subcategory recommendations...")
+
+# Haalt recommendations per subcategory op aan de hand van subcategoryviews,
+# en zet deze in products bij de juiste subcategorys.
+# Daarnaast zet hij in de lege velden het meest overal bekeken product op basis van meest bekeken subcategory.
 
 subcatrecs = []
 
@@ -140,6 +164,10 @@ for i in range(2):
 conn.commit()
 
 print("Calculating subsubcategory recommendations...")
+
+# Haalt recommendations per subsubcategory op aan de hand van subsubcategoryviews,
+# en zet deze in products bij de juiste subsubcategorys.
+# Daarnaast zet hij in de lege velden het meest overal bekeken product op basis van meest bekeken subsubcategory.
 
 subsubcatrecs = []
 
@@ -194,6 +222,8 @@ for i in range(2):
                                                      defaultsubsubcatrec[i][0]))
 
 print("Creating table with recommendations per product...")
+
+# Maakt tabel met recommendations per product uit tabel products.
 
 cur.execute("DROP TABLE IF EXISTS product_recommendations")
 
